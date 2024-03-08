@@ -1,35 +1,27 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  phoneNumber: {
-    type: String,
-    required: true
-  },
   email: {
     type: String,
     required: true,
-    unique: true 
+    unique: true,
   },
   password: {
     type: String,
-    required: true
+    required: true,
   },
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 // Hash the password before saving
-userSchema.pre('save', async function(next) {
+userSchema.pre("save", async function (next) {
   try {
     // Check if the password is modified or this is a new user
-    if (!this.isModified('password')) {
+    if (!this.isModified("password")) {
       return next();
     }
     // Generate a salt
@@ -42,6 +34,6 @@ userSchema.pre('save', async function(next) {
   }
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;

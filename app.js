@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const connectDB = require('./configs/db');
-const userRouter = require('./routers/userRouter');
+
 const app = express();
 
 
@@ -12,8 +12,11 @@ app.use(cors());
 
 connectDB();
 
-
-app.use("/api/user", userRouter);
+app.use("/uploads", express.static("uploads"));
+app.use("/api/user", require('./routers/userRouter'));
+app.use("/api/accommodation", require('./routers/accommodationRoutes'));
+app.use("/api/room", require('./routers/roomRoutes'));
+app.use("/api/booking", require('./routers/bookingRoutes'));
 
 // Start the server
 const PORT = process.env.PORT || 8080;

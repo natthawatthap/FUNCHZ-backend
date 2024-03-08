@@ -7,8 +7,6 @@ const userController = require("../controllers/userController");
 router.post(
   "/signup",
   [
-    body("name").notEmpty().withMessage("Name is required"),
-    body("phoneNumber").notEmpty().withMessage("Phone number is required"),
     body("email").isEmail().withMessage("Invalid email").normalizeEmail(),
     body("password")
       .isLength({ min: 6 })
