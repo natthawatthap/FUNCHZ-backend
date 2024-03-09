@@ -13,10 +13,7 @@ app.use(cors());
 connectDB();
 
 app.use("/uploads", express.static("uploads"));
-app.use("/api/user", require('./routers/userRouter'));
-app.use("/api/accommodation", require('./routers/accommodationRoutes'));
-app.use("/api/room", require('./routers/roomRoutes'));
-app.use("/api/booking", require('./routers/bookingRoutes'));
+app.use("/api", require('./routers/router'));
 
 // Start the server
 const PORT = process.env.PORT || 8080;

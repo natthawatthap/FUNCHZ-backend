@@ -4,20 +4,26 @@ const Booking = require("../models/booking");
 exports.createBooking = async (req, res) => {
   try {
     const {
-      user,
-      accommodation,
-      room,
+      userId,
+      accommodationId,
+      roomId,
+      name,
+      email,
+      phoneNumber,
       checkinDate,
-      checkoutDate
+      checkoutDate,
     } = req.body;
 
     // Create a new booking instance
     const booking = new Booking({
-      user,
-      accommodation,
-      room,
+      userId,
+      accommodationId,
+      roomId,
+      name,
+      email,
+      phoneNumber,
       checkinDate,
-      checkoutDate
+      checkoutDate,
     });
 
     // Save the booking to the database
@@ -26,6 +32,24 @@ exports.createBooking = async (req, res) => {
     res.status(201).json({ message: "Booking created successfully", booking });
   } catch (error) {
     console.error("Error creating booking:", error);
-    res.status(500).json({ message: "An error occurred while creating booking" });
+    res
+      .status(500)
+      .json({ message: "An error occurred while creating booking" });
+  }
+};
+
+exports.getBookingsByRoomId = async (req, res) => {
+  try {
+    const roomId = req.params.roomId; // Get room ID from request parameters
+
+    // Query bookings by room ID and select only checkinDate and checkoutDate
+    const bookings = await Booking.find({ roomId: roomId }).select(
+      "checkinDate checkoutDate"
+    );
+
+    res.status(200).json({ bookings });
+  } catch (error) {
+    console.error("Error fetching bookings by room ID:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

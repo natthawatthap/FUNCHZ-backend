@@ -87,3 +87,22 @@ exports.getAccommodations = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+// Controller function to get an accommodation by its ID
+exports.getAccommodationById = async (req, res) => {
+  try {
+    const accommodationId = req.params.accommodationId;
+
+    // Find accommodation by ID
+    const accommodation = await Accommodation.findById(accommodationId);
+
+    if (!accommodation) {
+      return res.status(404).json({ message: "Accommodation not found" });
+    }
+
+    res.status(200).json({ accommodation });
+  } catch (error) {
+    console.error("Error fetching accommodation by ID:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
