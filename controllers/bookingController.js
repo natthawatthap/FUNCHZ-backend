@@ -3,8 +3,9 @@ const Booking = require("../models/booking");
 // Controller function to create a new booking
 exports.createBooking = async (req, res) => {
   try {
+
+   const userId = req.userId
     const {
-      userId,
       accommodationId,
       roomId,
       name,

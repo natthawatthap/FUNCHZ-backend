@@ -1,6 +1,7 @@
 const express = require("express");
 const { body } = require("express-validator");
 const router = express.Router();
+const auth = require("../middlewares/auth");
 const userController = require("../controllers/userController");
 const accommodationController = require("../controllers/accommodationController");
 const roomController = require("../controllers/roomController");
@@ -24,6 +25,8 @@ router.post(
   userController.signin
 );
 
+router.get("/user", auth, userController.getUser);
+
 router.post("/accommodation", accommodationController.createAccommodation);
 router.get("/accommodations", accommodationController.getAccommodations);
 router.get(
@@ -35,7 +38,7 @@ router.post("/room", roomController.createRoom);
 router.get("/rooms/:accommodationId", roomController.getRoomsByAccommodationId);
 router.get("/room/:roomId", roomController.getRoomById);
 
-router.post("/booking", bookingController.createBooking);
+router.post("/booking",auth, bookingController.createBooking);
 router.get("/booking/:roomId", bookingController.getBookingsByRoomId);
 
 module.exports = router;
