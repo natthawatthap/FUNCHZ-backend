@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const connectDB = require('./configs/db');
+const logger = require('./configs/logger'); 
 require('dotenv').config();
 const app = express();
 
@@ -9,6 +10,12 @@ const app = express();
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
+
+app.use((req, res, next) => {
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  logger.info(`${ip} - ${req.method} ${req.url}`);
+  next();
+});
 
 connectDB();
 
