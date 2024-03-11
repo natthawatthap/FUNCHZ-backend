@@ -12,27 +12,25 @@ const bookingSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-// bookingSchema.pre("save", async function (next) {
-//   try {
-//     // Check if the room is available for the requested dates
-//     const bookings = await this.model("Booking").find({
-//       room: this.room,
-//       $or: [
-//         { checkinDate: { $lt: this.checkoutDate }, checkoutDate: { $gt: this.checkinDate } }, // Check if dates overlap
-//         { checkinDate: { $gte: this.checkoutDate } }, // Check if the new booking starts after existing bookings end
-//         { checkoutDate: { $lte: this.checkinDate } }, // Check if the new booking ends before existing bookings start
-//       ],
-//     });
+bookingSchema.pre("save", async function (next) {
+  try {
+    // Check if the room is available for the requested dates
+    const bookings = await this.model("Booking").find({
+      roomId: this.roomId, // Check bookings for the same roomId
+      $or: [
+        { checkinDate: { $lt: this.checkoutDate }, checkoutDate: { $gt: this.checkinDate } }, // Check if dates overlap
+      ],
+    });
 
-//     if (bookings.length > 0) {
-//       throw new Error("Room is already booked for the requested dates.");
-//     }
+    if (bookings.length > 0) {
+      throw new Error("Room is already booked for the requested dates.");
+    }
 
-//     next();
-//   } catch (error) {
-//     next(error);
-//   }
-// });
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 const Booking = mongoose.model("Booking", bookingSchema);
 

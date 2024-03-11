@@ -1,9 +1,15 @@
 const Room = require("../models/room");
 const upload = require("../middlewares/uploads");
 
-// Controller function to create a new room
+
 exports.createRoom = async (req, res) => {
   try {
+    // Validate request body
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
     upload(req, res, async function (err) {
       if (err) {
         console.error("Error uploading images:", err);
@@ -21,11 +27,6 @@ exports.createRoom = async (req, res) => {
 
       // Extract the paths of uploaded images from the request
       const images = req.files.map(file => file.path);
-
-      // Ensure required fields are provided
-      if (!accommodation || !name || !type || !pricePerNight) {
-        return res.status(400).json({ message: "Missing required fields" });
-      }
 
       // Create a new room instance
       const room = new Room({
@@ -48,6 +49,7 @@ exports.createRoom = async (req, res) => {
     res.status(500).json({ message: "An error occurred while creating room" });
   }
 };
+
 
 
 exports.getRoomsByAccommodationId = async (req, res) => {

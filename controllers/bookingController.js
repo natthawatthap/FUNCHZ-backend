@@ -1,10 +1,15 @@
 const Booking = require("../models/booking");
+const { validationResult } = require('express-validator');
 
-// Controller function to create a new booking
 exports.createBooking = async (req, res) => {
   try {
+    // Validate request body
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-   const userId = req.userId
+    const userId = req.userId;
     const {
       accommodationId,
       roomId,
@@ -38,6 +43,7 @@ exports.createBooking = async (req, res) => {
       .json({ message: "An error occurred while creating booking" });
   }
 };
+
 
 exports.getBookingsByRoomId = async (req, res) => {
   try {

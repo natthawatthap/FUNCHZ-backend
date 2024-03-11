@@ -1,9 +1,15 @@
 const Accommodation = require("../models/accommodation");
 const upload = require("../middlewares/uploads");
 
-// Controller function to create a new accommodation
+
 exports.createAccommodation = async (req, res) => {
   try {
+    // Validate request body
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
     upload(req, res, async function (err) {
       if (err) {
         console.error("Error uploading images:", err);
@@ -20,7 +26,7 @@ exports.createAccommodation = async (req, res) => {
       } = req.body;
 
       // Extract the paths of uploaded images from the request
-      const images = req.files.map(file => file.path);
+      const images = req.files.map((file) => file.path);
 
       // Create a new accommodation instance
       const accommodation = new Accommodation({
