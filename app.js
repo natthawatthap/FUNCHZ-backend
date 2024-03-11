@@ -22,6 +22,10 @@ connectDB();
 app.use("/uploads", express.static("uploads"));
 app.use("/api", require('./routers/router'));
 
+app.get("/health", (req, res) => {
+  res.status(200).send("Server is healthy");
+});
+
 // Start the server
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

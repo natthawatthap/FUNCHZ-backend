@@ -57,31 +57,36 @@ exports.createAccommodation = async (req, res) => {
 
 exports.getAccommodations = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
-    const limit = parseInt(req.query.limit) || 10; // Default to 10 documents per page if not provided
-    const sortBy = req.query.sortBy || "createdAt"; // Default to sorting by createdAt field if not provided
-    const sortOrder = req.query.sortOrder || "desc"; // Default to descending order if not provided
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const sortBy = req.query.sortBy || "createdAt";
+    const sortOrder = req.query.sortOrder || "desc";
+    const search = req.query.search || ""; 
 
-    // Calculate skip value based on page and limit
     const skip = (page - 1) * limit;
-
-    // Create sort object based on sortBy and sortOrder
     const sort = {};
     sort[sortBy] = sortOrder === "asc" ? 1 : -1;
 
-    // Query accommodations with pagination and sorting
-    const accommodationsPromise = Accommodation.find({})
+    // Define search criteria based on the 'search' query parameter
+    const searchCriteria = {
+      $or: [
+        { name: { $regex: search, $options: "i" } }, // Case-insensitive search by name
+        { description: { $regex: search, $options: "i" } }, // Case-insensitive search by description
+      ],
+    };
+
+    // Query accommodations with pagination, sorting, and search criteria
+    const accommodationsPromise = Accommodation.find(searchCriteria)
       .sort(sort)
       .skip(skip)
       .limit(limit);
 
-    // Count total accommodations
-    const totalAccommodationsPromise = Accommodation.countDocuments({});
+    // Count total accommodations matching search criteria
+    const totalAccommodationsPromise = Accommodation.countDocuments(searchCriteria);
 
-    // Wait for both promises to resolve
     const [accommodations, totalAccommodations] = await Promise.all([
       accommodationsPromise,
-      totalAccommodationsPromise
+      totalAccommodationsPromise,
     ]);
 
     res.status(200).json({
@@ -93,6 +98,7 @@ exports.getAccommodations = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
 
 // Controller function to get an accommodation by its ID
 exports.getAccommodationById = async (req, res) => {
